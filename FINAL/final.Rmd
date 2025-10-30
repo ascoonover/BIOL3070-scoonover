@@ -1,0 +1,50 @@
+---
+title: "Final Rmd"
+output: html_document
+date: "2025-10-30"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Background
+```{r,}
+imvdata=read.csv(file="infant-mortality-vaccines.csv")
+
+
+
+
+```
+
+## INTRODUCTION/ STUDY QUESTION
+Between vaccinated and non-vaccinated groups, who shows a more significant decline in child mortality?
+
+## HYPOTHESIS
+Infants that are vaccinated will show a more significant decline in mortality rates compared to those who are unvaccinated.
+
+## VISUALIZATIONS
+```{r}
+# Libraries
+library(ggplot2)
+library(dplyr)
+
+# Most basic bubble plot
+ggplot(imvdata, aes(x=Year, y=Infant.mortality.rate, size = 102)) +
+    geom_point(alpha=0.7)
+```
+
+
+## TEST STATISTICS
+```{r}
+mortality_lm_year <- lm(Infant.mortality.rate ~ Year, data = imvdata)
+ summary(mortality_lm_year)
+```
+Linear regression shows a resulting graph of the correlation between a response and predictor value.  
+
+
+
+
+
+
+
