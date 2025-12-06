@@ -8,41 +8,110 @@ date: "2025-10-30"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Background
-```{r,}
-imvdata=read.csv(file="infant-mortality-vaccines.csv")
+## ABSTRACT
+Parental vaccine hesitancy remains a growing public health challenge in the United States, with nearly one in four parents reporting confusion or concern about immunizing their children. This study examines whether childhood vaccinations contribute to increased survival and reduced mortality among infants and young children. Using nationally reported mortality data from the National Center for Health Statistics (1900–2018) and global infant-mortality data comparing vaccinated and unvaccinated groups (1974–2024), trends in mortality rates were analyzed to evaluate the long-term impact of vaccination programs. 
+  
+  
+Results demonstrate a dramatic decline in childhood mortality throughout the 20th century, coinciding with the development and standardization of routine childhood immunizations. Comparative analyses revealed that vaccinated infants experienced a 72.3% reduction in mortality rates, while unvaccinated infants showed a smaller decline of 54.4%. A generalized linear model confirmed a statistically significant association between vaccination status and lower mortality (p = 2.2e-16). Although potential confounding factors such as healthcare access and socioeconomic differences could not be controlled in the available datasets, the findings strongly support the conclusion that vaccination substantially improves infant survival outcomes. These results contribute to ongoing public health communication efforts by emphasizing the effectiveness of vaccinations and the potential consequences of failing to immunize young children.
 
 
+## BACKGROUND
+  Bringing a child into this world can be challenging and there's several battles new parents can face! Public or private school? Discovering a routine? Breast or bottle-fed? And possibly one of the most controversial, to vaccinate or to not vaccinate? Nearly one out of four parents admit to having confusiion and concerns over vaccinatating their children (Olson, Berry, and Kumar, 2020). This report will seek to help answer at least one of those difficult questions and spread awareness surrounding the effectiveness of vaccinations and possible consequences of failing to vaccinate. The research presented will beg the question, are vaccinations important in the survival and longevity of newborn children? 
+    
 
-
-```
-
-## INTRODUCTION/ STUDY QUESTION
-Between vaccinated and non-vaccinated groups, who shows a more significant decline in child mortality?
-
-## HYPOTHESIS
-Infants that are vaccinated will show a more significant decline in mortality rates compared to those who are unvaccinated.
-
-## VISUALIZATIONS
 ```{r}
-# Libraries
-library(ggplot2)
-library(dplyr)
-
-# Most basic bubble plot
-ggplot(imvdata, aes(x=Year, y=Infant.mortality.rate, size = 102)) +
-    geom_point(alpha=0.7)
+imvdata=read.csv(file="infant-mortality-vaccines.csv")
 ```
 
+```{r}
+imvdata$Group= imvdata$Entity
+```
 
-## TEST STATISTICS
+```{r,}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+```
+
+## STUDY QUESTION/ HYPOTHESIS
+  Between vaccinated and non-vaccinated groups, who shows a more significant decline in child mortality?
+
+It is hypothesized infants that are vaccinated will show a more significant decline in mortality rates compared to those who are unvaccinated.
+
+## METHODS/ RESULTS
+ This graph shows deaths of all causes, not just illness related, of children in America aged 1-4. It begins in 1900 and ends in 2018. As time ran on, death rates began falling dramatically.
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+
+# Import the dataset, skipping the title line
+mortality_data <- read_csv("NCHS_-_Childhood_Mortality_Rates-2.csv", skip = 1)
+
+# Clean and convert the "Death Rate" column:
+# - Remove commas
+# - Convert to numeric
+mortality_data <- mortality_data %>%
+  mutate(`Death Rate` = as.numeric(gsub(",", "", `Death Rate`)))
+
+# Plot with a continuous y-axis
+
+ggplot(mortality_data, aes(x = Year, y = `Death Rate`)) +
+geom_line(color = "deeppink1", size = 1.2) +
+theme_minimal(base_size = 10) +
+scale_y_continuous(labels = scales::comma) +
+labs(
+title = "Childhood Mortality Rates in Children Age 0-4 Years in the U.S. (1900–2018)",
+x = "Year",
+y = "Death Rate (per 100,000)"
+)
+```
+  (National Center for Health Statistics, 2020).
+ 
+
+```{r}
+ggplot(imvdata, aes(x = Year, 
+                    y = Infant.mortality.rate, 
+                    color = Group)) + 
+  geom_point(alpha = 0.7, size = 3) +
+  labs(
+    title = "Year vs. Infant Mortality Rate",
+    x = "Year",
+    y = "Infant Mortality Rate",
+    color = ""  # legend title (blank looks clean)
+  ) +
+  scale_color_manual(values = c("deeppink1", "purple"))
+```
+(Shattock et al., 2024)
+
+
+  This graph again focuses on child mortality rates, however, it exclusively looks at children who had been vaccinated against children that had not been vaccinated on a global scale. This graph also works on a percentage scale, rather than raw numbers. It begin in 1974 and ends in 2024. 
+
+## DISCUSSION
+Beginning in 1900, the child mortality rate for children aged 1-4 in America was nearly 1,983!, in 1940 it was 290 and by 1980 the mortality rate was down to 98 (National Center for Health Statistics, 2020). The major drops in mortality coincide with the standardization of newly produced vaccinations (Barakat, 2021). The Expanded Programme on Immunization (EPI), was launched by the World Health Organization in 1974.
+   
+   
+   The second graph (Shattock et al., 2024) shows that starting in 1974, the mortality rate was similar, nearly 10.3 per 1,000 births of all unvaccinated children and 10.1 per 1,000 births of all vaccinated. The gap between groups began to grow, and by 2024, the mortality rate had dropped to 4.7% for unvaccinated groups and 2.8% for vaccinated groups (Shattock et al., 2024). Therefore, the vaccinated group saw a 72.3% reduction in mortality while the unvaccinated group saw a 54.4% reduction. While both the vaccinated and unvaccinated mortality rates dropped, the vaccinated mortality rate dropped by 23.3% more!
+  
+  
+  Upon running a Generalized Linear Model test utilizing linear regression the reported p-value was 2.2e-16. These reported results are statistically highly significant. This means there is a high correlation between vaccinations and a lower mortality rate. There are confounding factors that do need to be taken into consideration when analyzing these results. The data comes from a generalized global study that was unable to screen for differences within the patients. For example: access to healthcare, lifestyles, or genetic predispositions was not taken into account.  
+
 ```{r}
 mortality_lm_year <- lm(Infant.mortality.rate ~ Year, data = imvdata)
  summary(mortality_lm_year)
 ```
-Linear regression shows a resulting graph of the correlation between a response and predictor value.  
+
+Linear regression shows a resulting graph of the correlation between a response and predictor value. The predictor value is the status of vaccination and the response value is the mortality rate.
 
 
+## CONCLUSION
+  The statistically highly significant results (p=2.2e-16) do correlate vaccinations to successfully lowering infant mortality rates. This information is important as currently, there is ample controversy regarding vaccinations. As mentioned above it can be difficult to know what discison regarding vaccinations to make. Data like this can be used to inform the public of the most simplistic benefits vaccinations have to offer and serve as a reminder of why vaccinations began originally: to save lives. 
+
+## REFERENECES 
+  National Center for Health Statistics. (2020). Mortality trends in the United States, 1900–2018 [Data visualization]. Centers for Disease Control and Prevention. https://www.cdc.gov/nchs/data-visualization/mortality-trends/index.htm 
+  Barakat, A. J. (2021, November). The history of vaccination. Contemporary Pediatrics. https://www.contemporarypediatrics.com/view/the-history-of-vaccination
+  Shattock, K., Ritchie, H., Roser, M., & Mathieu, E. (2024). Infant mortality vs. share of children vaccinated [Data chart]. Our World in Data. https://ourworldindata.org/grapher/infant-mortality-vaccines 
+  Olson, O., Berry, C., & Kumar, N. (2020). Addressing parental vaccine hesitancy towards childhood vaccines in the United States: A systematic literature review of communication interventions and strategies. International Journal of Environmental Research and Public Health, 17(24), Article 9494. https://doi.org/10.3390/ijerph17249494
+ 
 
 
 
